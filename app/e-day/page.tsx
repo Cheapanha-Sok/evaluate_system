@@ -1,7 +1,10 @@
 import DepartmentsForm from "@/components/deparments-form";
 import Image from "next/image";
 import Link from "next/link";
-export default function page() {
+import { useSession } from "next-auth/react";
+export default async function page() {
+  const { data : session} = useSession()
+  console.log({session})
   return (
     <div>
       <div>

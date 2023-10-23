@@ -1,8 +1,41 @@
+"use client";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {signIn} from 'next-auth/react'
+import { useRouter } from "next/navigation";
+
+let validationSchema = yup.object({
+  email : yup.string().email().required(),
+  password : yup.string().required().min(6).max(32)
+})
 
 export default function Home(){
-    return(
-        <main className="bg-[url('/stem.jpeg')] bg-cover h-screen">
+  const router = useRouter();
+
+  const {setError , reset , register , handleSubmit , formState : {errors}} = useForm({
+    resolver : yupResolver(validationSchema)
+  })
+  const handleFormSubmit = async (data:any) => {
+    console.log(data)
+    signIn('credentials',{
+      email : data.email, 
+      password : data.password,
+      redirect : false,
+      callbackUrl : '/'
+
+    }).then((res)=>{
+      if(res?.error){
+        setError("email", { message: "Something went wrong", type: "error" });
+      }else{
+        router.push('/')
+      }
+    })
+  }
+  
+    return (
+      <main className="bg-[url('/stem.jpeg')] bg-cover h-screen">
         <div className="flex flex-wrap justify-evenly items-center bg-sky-950/30 backdrop-brightness-75 h-full">
           <div className="flex justify-center items-center md:ml-[5%] md:mb-[5%]">
             <div className="mr-2">
@@ -42,7 +75,7 @@ export default function Home(){
             <h1 className="text-black text-center min-[300px]:text-2xl md:text-4xl md:mt-2  font-medium mb-1 md:6">
               Login
             </h1>
-            <form>
+            <form onSubmit={handleSubmit(handleFormSubmit)}>
               <div className="md:mt-4">
                 <label className="block md:text-lg min-[300px]:text-base font-medium text-slate-700">
                   Email
@@ -50,10 +83,10 @@ export default function Home(){
                 <div className="mt-1">
                   <input
                     type="email"
-                    name="email"
                     id="email"
                     className="text-sm md:text-base px-3 py-2 md:py-3 bg-white border shadow-sm border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-600 focus:ring-sky-600 block w-full rounded-md sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none"
                     placeholder="Enter your email"
+                    {...register("email")}
                   />
                 </div>
               </div>
@@ -64,15 +97,18 @@ export default function Home(){
                 <div className="mt-1">
                   <input
                     type="password"
-                    name="password"
                     id="password"
+                    {...register("password")}
                     placeholder="Enter your password"
                     className="text-sm md:text-base px-3 py-2 md:py-3 bg-white border shadow-sm border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-600 focus:ring-sky-600 block w-full rounded-md sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none"
                   />
                 </div>
               </div>
               <div className="mt-6 text-center">
-                <button className="bg-[#024164] hover:bg-[#03679d] w-full px-3 py-3 text-sm md:text-lg leading-5 rounded-md font-semibold text-white" type="submit">
+                <button
+                  className="bg-[#024164] hover:bg-[#03679d] w-full px-3 py-3 text-sm md:text-lg leading-5 rounded-md font-semibold text-white"
+                  type="submit"
+                >
                   Sign in
                 </button>
               </div>
@@ -84,22 +120,25 @@ export default function Home(){
             </div>
             <div className="flex items-center py-px md:py-3 my-2">
               <div className="flex-grow h-px bg-gray-400"></div>
-  
+
               <span className="flex-shrink text-sm md:text-lg text-gray-500 px-4 font-light">
                 OR
               </span>
-  
+
               <div className="flex-grow h-px bg-gray-400"></div>
             </div>
-  
+
             <div className="text-center mt-2">
               <h1 className="text-sm md:text-base">Don't have an account?</h1>
-              <button className="mt-4 bg-[#024164] hover:bg-[#03679d] w-full px-3 py-3 text-sm md:text-lg leading-5 rounded-md font-semibold text-white" type="submit">
+              <button
+                className="mt-4 bg-[#024164] hover:bg-[#03679d] w-full px-3 py-3 text-sm md:text-lg leading-5 rounded-md font-semibold text-white"
+                type="submit"
+              >
                 Register
               </button>
             </div>
           </div>
         </div>
       </main>
-    )
+    );
 }
