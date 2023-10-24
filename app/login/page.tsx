@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {signIn} from 'next-auth/react'
 import { useRouter } from "next/navigation";
+import {setCookie} from "cookies-next"
 
 let validationSchema = yup.object({
   email : yup.string().email().required(),
@@ -29,6 +30,7 @@ export default function Home(){
       if(res?.error){
         setError("email", { message: "Something went wrong", type: "error" });
       }else{
+        setCookie('logged' , 'true')
         router.push('/')
       }
     })
