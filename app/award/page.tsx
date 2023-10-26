@@ -1,11 +1,16 @@
 "use client"
 import Image from "next/image";
 import '../award/page.css'
-
 import {  useState } from "react";
 import TextWithAnimation from "./animateBtn/animateText";
+import type { User } from "next-auth";
+import { useSession } from "next-auth/react";
+type props = {
+  user: User;
+  pagetype: string;
+};
 
-export default function award() {
+export default function award({user , pagetype} : props) {
   const texts =['award', 'Grace Hopper', 'Margaret Hamilton'];
   const [text, setText] = useState(false);
   const scrolled ={
@@ -20,6 +25,7 @@ export default function award() {
     }
   }
   return (
+    
   
     <main>
       <section className=" h-72 mt-20">
@@ -27,7 +33,7 @@ export default function award() {
           <h1 className="text-4xl tracking-tight font-extrabold  sm:text-5xl md:text-6xl">
             Evaluation System
           </h1>
-          <p className="max-w-2xl mx-auto text-3xl mt-8">Award of the year</p>
+          <p className="max-w-2xl mx-auto text-3xl mt-8">Role : {user.role}</p>
         </div>
       </section>
 

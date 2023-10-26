@@ -3,8 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 export default async function page() {
-  const { data : session} = useSession()
-  console.log({session})
+
   return (
     <div>
       <div>

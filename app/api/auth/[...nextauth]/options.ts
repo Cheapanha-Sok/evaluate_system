@@ -8,9 +8,9 @@ export const options: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "your_email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials , req) {
+      async authorize(credentials, req) {
         // const {email , password} = credentials as any;
-        // const url = "Api_end_point";
+        // const url = "https://api.publicapis.org/entries";
         // const res = await fetch(url, {
         //   method: "POST",
         //   headers: {"Content-Type": "application/json" },
@@ -26,12 +26,11 @@ export const options: NextAuthOptions = {
         // return null;
         const user = {
           id: "42",
-          email: "SethtyVitra@gmail.com",
+          email: "SethyVitra@gmail.com",
           password: "nextauth",
-          role: "community",
-          accesstoken : "hfdgfjgsdhfjgshdf"
+          role: "manager",
+          accesstoken: "hfdgfjgsdhfjgshdf",
         };
-
         if (
           credentials?.email === user.email &&
           credentials?.password === user.password
@@ -43,20 +42,15 @@ export const options: NextAuthOptions = {
       },
     }),
   ],
-  callbacks: {
-        // Ref: https://authjs.dev/guides/basics/role-based-access-control#persisting-the-role
-        async jwt({ token, user }) {
-            return ({...token,...user})
-        },
-        // If you want to use the role in client components
-        async session({ session, token ,user}) {
-          session.user = token as any;
-          return session
-        },
+    // Ref: https://authjs.dev/guides/basics/role-based-access-control#persisting-the-role
+    callbacks: {
+      jwt({ token, user }) {
+        if (user) token.role = user.role;
+        return token;
       },
-
-  pages: {
-    signIn: "/login",
-    signOut: "/signout",
-  },
+      session({ session, token }) {
+        if(session?.user) session.user.role = token.role;
+        return session;
+      },
+    }
 };
